@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0d1117;
+  --color-panel: rgba(15, 23, 42, 0.6);
+  --color-cyan: #00f0ff;
+  --color-cyan-glow: rgba(0, 240, 255, 0.3);
+  --color-gold: #ffb703;
+  --color-gold-glow: rgba(255, 183, 3, 0.3);
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: "Inter", sans-serif;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-slate-300 antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+.glass {
+  @apply backdrop-blur-md bg-panel border border-slate-700/50;
+}
+
+.neon-border {
+  @apply border border-cyan/50 shadow-[0_0_10px_rgba(0,240,255,0.2)];
+}
+
+.gold-border {
+  @apply border border-gold/50 shadow-[0_0_10px_rgba(255,183,3,0.2)];
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full hover:bg-slate-600;
+}
