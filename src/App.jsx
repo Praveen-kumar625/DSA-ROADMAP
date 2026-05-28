@@ -7,38 +7,15 @@ import { PhaseCard } from './components/PhaseCard';
 import { CheatSheetTerminal } from './components/CheatSheetTerminal';
 import { ProgressTracker } from './components/ProgressTracker';
 import { QuizModal } from './components/QuizModal';
+import { ResourcesVault } from './components/ResourcesVault';
 import { AnimatePresence } from 'framer-motion';
+import { useProgress } from './hooks/useProgress';
 
 function App() {
-  const [completedTasks, setCompletedTasks] = useState(() => {
-    const saved = localStorage.getItem('dsa_completed_tasks');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [unlockedPhases, setUnlockedPhases] = useState(() => {
-    const saved = localStorage.getItem('dsa_unlocked_phases');
-    return saved ? JSON.parse(saved) : [1];
-  });
-
-  const [unlockedBadges, setUnlockedBadges] = useState(() => {
-    const saved = localStorage.getItem('dsa_unlocked_badges');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { completedTasks, unlockedPhases, unlockedBadges, toggleTask, unlockPhase, unlockBadge } = useProgress();
 
   const [expandedPhase, setExpandedPhase] = useState(1);
   const [quizPhase, setQuizPhase] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem('dsa_completed_tasks', JSON.stringify(completedTasks));
-  }, [completedTasks]);
-
-  useEffect(() => {
-    localStorage.setItem('dsa_unlocked_phases', JSON.stringify(unlockedPhases));
-  }, [unlockedPhases]);
-
-  useEffect(() => {
-    localStorage.setItem('dsa_unlocked_badges', JSON.stringify(unlockedBadges));
-  }, [unlockedBadges]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -53,25 +30,16 @@ function App() {
   const totalTasks = roadmapData.phases.reduce((acc, phase) => acc + phase.days.length, 0);
   const progress = Math.round((completedTasks.length / totalTasks) * 100);
 
-  const handleTaskToggle = (taskId) => {
-    setCompletedTasks(prev => 
-      prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]
-    );
-  };
-
   const handlePassQuiz = () => {
     if (quizPhase) {
       const nextPhaseId = quizPhase.id + 1;
-      if (nextPhaseId <= roadmapData.phases.length && !unlockedPhases.includes(nextPhaseId)) {
-        setUnlockedPhases(prev => [...prev, nextPhaseId]);
+      if (nextPhaseId <= roadmapData.phases.length) {
+        unlockPhase(nextPhaseId);
         setExpandedPhase(nextPhaseId);
       }
       
       // Unlock badge for the phase just completed
-      const badgeId = `b${quizPhase.id}`;
-      if (!unlockedBadges.includes(badgeId)) {
-        setUnlockedBadges(prev => [...prev, badgeId]);
-      }
+      unlockBadge(`b${quizPhase.id}`);
     }
   };
 
@@ -101,16 +69,17 @@ function App() {
             isExpanded={expandedPhase === phase.id}
             onToggle={() => setExpandedPhase(expandedPhase === phase.id ? null : phase.id)}
             completedTasks={completedTasks}
-            onTaskToggle={handleTaskToggle}
+            onTaskToggle={toggleTask}
             onStartQuiz={() => setQuizPhase(phase)}
           />
         ))}
       </div>
 
-      {/* 4. Right Panel (Tracker & Cheatsheet) */}
+      {/* 4. Right Panel (Tracker, Cheatsheet & Resources) */}
       <div className="lg:col-span-3 space-y-8">
         <ProgressTracker />
         <CheatSheetTerminal snippets={roadmapData.cheatsheet} />
+        <ResourcesVault resources={roadmapData.resources} prerequisites={roadmapData.prerequisites} />
       </div>
 
       {/* Overlays */}

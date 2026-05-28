@@ -3,6 +3,42 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, Code, BookOpen, Target, ExternalLink } from 'lucide-react';
 
 export const DailyTask = ({ task, isCompleted, onToggle }) => {
+  const handleToggle = () => {
+    // Audio feedback logic
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      if (!isCompleted) {
+        // Success sound
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      } else {
+        // Uncheck sound
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      }
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    } catch (e) {
+      console.log('Audio feedback not supported');
+    }
+    
+    onToggle();
+  };
+
   return (
     <motion.div 
       whileHover={{ y: -2 }}
@@ -13,12 +49,13 @@ export const DailyTask = ({ task, isCompleted, onToggle }) => {
           <span className="text-[10px] font-mono text-cyan/70 uppercase tracking-widest block mb-1">DAYS {task.days}</span>
           <h4 className="text-lg font-bold text-white leading-tight">{task.title}</h4>
         </div>
-        <button 
-          onClick={onToggle}
-          className={`w-6 h-6 rounded border transition-all flex items-center justify-center ${isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600 text-transparent hover:border-cyan'}`}
+        <motion.button 
+          whileTap={{ scale: 0.8 }}
+          onClick={handleToggle}
+          className={`w-6 h-6 rounded border transition-all flex items-center justify-center ${isCompleted ? 'bg-emerald-500 border-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'border-slate-600 text-transparent hover:border-cyan'}`}
         >
           <CheckCircle2 size={16} />
-        </button>
+        </motion.button>
       </div>
 
       <div className="space-y-3 mb-6">

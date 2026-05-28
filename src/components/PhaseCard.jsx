@@ -51,9 +51,20 @@ export const PhaseCard = ({ phase, isLocked, isExpanded, onToggle, completedTask
             <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Did You Know Egg */}
               <div className="col-span-full glass bg-cyan/5 border-cyan/20 p-4 rounded-lg flex items-start gap-4 mb-2">
-                <div className="p-2 rounded bg-cyan/10 text-cyan">
+                <motion.div 
+                  whileTap={{ scale: 0.8 }}
+                  onClick={(e) => {
+                    const count = (parseInt(e.currentTarget.dataset.clicks || '0') + 1);
+                    e.currentTarget.dataset.clicks = count;
+                    if (count === 3) {
+                      alert("SECRET UNLOCKED: In Competitive Programming, always use BufferedReader or fast I/O instead of Scanner in Java to avoid Time Limit Exceeded (TLE)!");
+                      e.currentTarget.dataset.clicks = 0;
+                    }
+                  }}
+                  className="p-2 rounded bg-cyan/10 text-cyan cursor-pointer select-none"
+                >
                   <HelpCircle size={18} className="animate-pulse" />
-                </div>
+                </motion.div>
                 <div>
                   <span className="text-[10px] font-mono text-cyan uppercase tracking-widest">Tactical Intelligence</span>
                   <p className="text-xs text-slate-400 leading-relaxed mt-1">{phase.didYouKnow}</p>

@@ -19,8 +19,18 @@ export const Layout = ({ children, progress, currentPhase, badgesCount }) => {
           <div className="w-10 h-10 rounded bg-cyan/10 flex items-center justify-center neon-border z-10">
             <Terminal className="text-cyan w-6 h-6" />
           </div>
-          <div className="z-10">
-            <h1 className="font-mono font-bold text-cyan tracking-tighter uppercase text-sm">DSA_MASTERY_OS</h1>
+          <div className="z-10 cursor-pointer select-none" onDoubleClick={() => {
+            document.body.style.backgroundImage = 'url("https://media.giphy.com/media/A06m7eA9I703vL6Qvj/giphy.gif")';
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundBlendMode = 'overlay';
+            document.body.style.backgroundColor = 'rgba(13, 17, 23, 0.8)';
+            setTimeout(() => {
+              document.body.style.backgroundImage = '';
+              document.body.style.backgroundBlendMode = '';
+              document.body.style.backgroundColor = '';
+            }, 5000);
+          }}>
+            <h1 className="font-mono font-bold text-cyan tracking-tighter uppercase text-sm hover:text-white transition-colors">DSA_MASTERY_OS</h1>
             <p className="text-[10px] text-slate-500 font-mono">BY PRAVEEN KUMAR</p>
           </div>
         </div>
